@@ -13,3 +13,4 @@ Builds/
 *.DS_store
 
 *.apk
+*.xcuserdatad/
