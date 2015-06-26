@@ -35,6 +35,9 @@ NSView* view = nil;
 
 - (void)touchesBeganWithEvent:(NSEvent *)event
 {
+	if (!trackPadTouchBeganMethod)
+		return;
+
     NSSet *touches = [event touchesMatchingPhase:NSTouchPhaseBegan inView:view];
     for (NSTouch *touch in touches)
     {
@@ -48,6 +51,9 @@ NSView* view = nil;
 
 - (void)touchesMovedWithEvent:(NSEvent *)event
 {
+	if (!trackPadTouchMovedMethod)
+		return;
+
     NSSet *touches = [event touchesMatchingPhase:NSTouchPhaseMoved inView:view];
     for (NSTouch *touch in touches)
     {
@@ -61,6 +67,9 @@ NSView* view = nil;
 
 - (void)touchesEndedWithEvent:(NSEvent *)event
 {
+	if (!trackPadTouchEndedMethod)
+		return;
+
     NSSet *touches = [event touchesMatchingPhase:NSTouchPhaseEnded inView:view];
     for (NSTouch *touch in touches)
     {
@@ -73,6 +82,9 @@ NSView* view = nil;
 
 - (void)touchesCancelledWithEvent:(NSEvent *)event
 {
+	if (!trackPadTouchCancelledMethod)
+		return;
+
     NSSet *touches = [event touchesMatchingPhase:NSTouchPhaseCancelled inView:view];
     for (NSTouch *touch in touches)
     {
@@ -119,19 +131,19 @@ void InitPlugin(const char* pluginPath)
     monoAssembly = mono_domain_assembly_open(domain, assemblyPath.UTF8String);
     monoImage = mono_assembly_get_image(monoAssembly);
     
-    trackPadTouchBeganDesc = mono_method_desc_new("TrackPadInput:TrackPadTouchBegan", FALSE);
+    trackPadTouchBeganDesc = mono_method_desc_new("TrackpadTouch.TrackpadInput:TrackpadTouchBegan", TRUE);
     trackPadTouchBeganMethod = mono_method_desc_search_in_image(trackPadTouchBeganDesc, monoImage);
     mono_method_desc_free(trackPadTouchBeganDesc);
 
-    trackPadTouchMovedDesc = mono_method_desc_new("TrackPadInput:TrackPadTouchMoved", FALSE);
+    trackPadTouchMovedDesc = mono_method_desc_new("TrackpadTouch.TrackpadInput:TrackpadTouchMoved", TRUE);
     trackPadTouchMovedMethod = mono_method_desc_search_in_image(trackPadTouchMovedDesc, monoImage);
     mono_method_desc_free(trackPadTouchMovedDesc);
     
-    trackPadTouchEndedDesc = mono_method_desc_new("TrackPadInput:TrackPadTouchEnded", FALSE);
+    trackPadTouchEndedDesc = mono_method_desc_new("TrackpadTouch.TrackpadInput:TrackpadTouchEnded", TRUE);
     trackPadTouchEndedMethod = mono_method_desc_search_in_image(trackPadTouchEndedDesc, monoImage);
     mono_method_desc_free(trackPadTouchEndedDesc);
     
-    trackPadTouchCancelledDesc = mono_method_desc_new("TrackPadInput:TrackPadTouchCancelled", FALSE);
+    trackPadTouchCancelledDesc = mono_method_desc_new("TrackpadTouch.TrackpadInput:TrackpadTouchCancelled", FALSE);
     trackPadTouchCancelledMethod = mono_method_desc_search_in_image(trackPadTouchCancelledDesc, monoImage);
     mono_method_desc_free(trackPadTouchCancelledDesc);
 }

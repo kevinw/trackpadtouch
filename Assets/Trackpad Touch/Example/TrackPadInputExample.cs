@@ -1,14 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TrackPadInputExample : MonoBehaviour {
+namespace TrackpadTouch {
+
+public class TrackpadInputExample : MonoBehaviour {
 	public GameObject prefab;
 	
 	// Update is called once per frame
 	void Update () {
-		foreach (var touch in TrackPadInput.touches) {
+		foreach (var touch in TrackpadInput.touches) {
 			if (touch.phase == TouchPhase.Began) {
 			}
 		}
 	}
+}
+
 }
