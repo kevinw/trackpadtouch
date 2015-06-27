@@ -212,13 +212,14 @@ namespace TrackpadTouch {
 		private static readonly List<Touch> frameTouches = new List<Touch>();
 		private static int lastFrame = -1;
 
+		// for setting private variables on Touch objects
 		static FieldInfo Touch_deltaTime;
 		static FieldInfo Touch_tapCount;
 		static FieldInfo Touch_phase;
 		static FieldInfo Touch_deltaPosition;
 		static FieldInfo Touch_fingerId;
 		static FieldInfo Touch_position;
-		static FieldInfo Touch_rawPosition;
+		//static FieldInfo Touch_rawPosition;
 
 		const BindingFlags flag = BindingFlags.Instance | BindingFlags.NonPublic;
 		static TrackpadInput() {
@@ -229,7 +230,7 @@ namespace TrackpadTouch {
 			Touch_deltaPosition = type.GetField("m_PositionDelta", flag);
 			Touch_fingerId = type.GetField("m_FingerId", flag);
 			Touch_position = type.GetField("m_Position", flag);
-			Touch_rawPosition = type.GetField("m_RawPosition", flag);
+			//Touch_rawPosition = type.GetField("m_RawPosition", flag);
 		}
 
 		public static Touch createTouch( int fingerId, int tapCount, Vector2 position, Vector2 deltaPos, float timeDelta, TouchPhase phase )
