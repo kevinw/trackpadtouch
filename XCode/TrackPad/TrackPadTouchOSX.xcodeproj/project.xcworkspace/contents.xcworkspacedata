@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/kevin/src/UnityTrackpad/XCode/TrackPad/TrackPadTouchOSX.xcodeproj">
+      location = "self:/Users/kevin/src/UnityTrackpad/XCode/TrackPad/TrackpadTouchOSX.xcodeproj">
    </FileRef>
 </Workspace>

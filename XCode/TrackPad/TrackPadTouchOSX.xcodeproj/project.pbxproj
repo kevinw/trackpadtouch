@@ -7,83 +7,108 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0A85DBA51B3D910E0007C385 /* libmono.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A85DBA41B3D910E0007C385 /* libmono.0.dylib */; };
-		0A85DBA71B3D91340007C385 /* Plugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A85DBA61B3D91340007C385 /* Plugin.m */; };
+		0A15C63A1B4096BB00C2F42F /* libmono.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A15C6201B40959500C2F42F /* libmono.0.dylib */; };
+		0A15C63C1B4096FB00C2F42F /* libmono.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A15C63B1B4096FB00C2F42F /* libmono.0.dylib */; };
+		0A15C63D1B4096FF00C2F42F /* Plugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A85DBA61B3D91340007C385 /* Plugin.m */; };
+		0A15C63E1B4096FF00C2F42F /* Plugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A85DBA61B3D91340007C385 /* Plugin.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0A85DB9A1B3D90610007C385 /* TrackPadTouchOSX.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrackPadTouchOSX.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		0A85DB9E1B3D90610007C385 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0A85DBA41B3D910E0007C385 /* libmono.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmono.0.dylib; path = ../../../../../../Applications/Unity/Unity.app/Contents/Frameworks/MonoEmbedRuntime/osx/libmono.0.dylib; sourceTree = "<group>"; };
-		0A85DBA61B3D91340007C385 /* Plugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Plugin.m; sourceTree = "<group>"; };
+		0A15C6201B40959500C2F42F /* libmono.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmono.0.dylib; path = /Applications/Unity/Unity.app/Contents/Frameworks/MonoEmbedRuntime/osx/libmono.0.dylib; sourceTree = "<absolute>"; };
+		0A15C6281B4096A100C2F42F /* TrackpadTouchOSX5.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrackpadTouchOSX5.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A15C62B1B4096A100C2F42F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = TrackpadTouchOSX5/Info.plist; sourceTree = "<group>"; };
+		0A15C6331B4096B500C2F42F /* TrackpadTouchOSX4.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrackpadTouchOSX4.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A15C6361B4096B600C2F42F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = TrackpadTouchOSX4/Info.plist; sourceTree = "<group>"; };
+		0A15C63B1B4096FB00C2F42F /* libmono.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmono.0.dylib; path = "../../../../../../Applications/Unity 5/Unity 5.app/Contents/Frameworks/MonoEmbedRuntime/osx/libmono.0.dylib"; sourceTree = "<group>"; };
+		0A85DBA61B3D91340007C385 /* Plugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Plugin.m; path = TrackPad/Plugin.m; sourceTree = "<group>"; };
 		0A85DBA81B3D915F0007C385 /* TrackPad_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPad_Prefix.pch; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		0A85DB971B3D90610007C385 /* Frameworks */ = {
+		0A15C6251B4096A100C2F42F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A85DBA51B3D910E0007C385 /* libmono.0.dylib in Frameworks */,
+				0A15C63C1B4096FB00C2F42F /* libmono.0.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0A15C6301B4096B500C2F42F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A15C63A1B4096BB00C2F42F /* libmono.0.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0A15C6221B40959E00C2F42F /* Unity4 */ = {
+			isa = PBXGroup;
+			children = (
+				0A15C6331B4096B500C2F42F /* TrackpadTouchOSX4.bundle */,
+				0A15C6201B40959500C2F42F /* libmono.0.dylib */,
+				0A15C6361B4096B600C2F42F /* Info.plist */,
+			);
+			name = Unity4;
+			sourceTree = "<group>";
+		};
+		0A15C6231B4095C000C2F42F /* Unity5 */ = {
+			isa = PBXGroup;
+			children = (
+				0A15C6281B4096A100C2F42F /* TrackpadTouchOSX5.bundle */,
+				0A15C63B1B4096FB00C2F42F /* libmono.0.dylib */,
+				0A15C62B1B4096A100C2F42F /* Info.plist */,
+			);
+			name = Unity5;
+			sourceTree = "<group>";
+		};
 		0A85DB911B3D90610007C385 = {
 			isa = PBXGroup;
 			children = (
-				0A85DBA81B3D915F0007C385 /* TrackPad_Prefix.pch */,
-				0A85DB9C1B3D90610007C385 /* TrackPad */,
-				0A85DB9B1B3D90610007C385 /* Products */,
-				0A85DBA41B3D910E0007C385 /* libmono.0.dylib */,
-			);
-			sourceTree = "<group>";
-		};
-		0A85DB9B1B3D90610007C385 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				0A85DB9A1B3D90610007C385 /* TrackPadTouchOSX.bundle */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		0A85DB9C1B3D90610007C385 /* TrackPad */ = {
-			isa = PBXGroup;
-			children = (
-				0A85DB9D1B3D90610007C385 /* Supporting Files */,
+				0A15C6231B4095C000C2F42F /* Unity5 */,
+				0A15C6221B40959E00C2F42F /* Unity4 */,
 				0A85DBA61B3D91340007C385 /* Plugin.m */,
+				0A85DBA81B3D915F0007C385 /* TrackPad_Prefix.pch */,
 			);
-			path = TrackPad;
-			sourceTree = "<group>";
-		};
-		0A85DB9D1B3D90610007C385 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				0A85DB9E1B3D90610007C385 /* Info.plist */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0A85DB991B3D90610007C385 /* TrackPadTouchOSX */ = {
+		0A15C6271B4096A100C2F42F /* TrackpadTouchOSX5 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0A85DBA11B3D90610007C385 /* Build configuration list for PBXNativeTarget "TrackPadTouchOSX" */;
+			buildConfigurationList = 0A15C62C1B4096A100C2F42F /* Build configuration list for PBXNativeTarget "TrackpadTouchOSX5" */;
 			buildPhases = (
-				0A85DB961B3D90610007C385 /* Sources */,
-				0A85DB971B3D90610007C385 /* Frameworks */,
-				0A85DB981B3D90610007C385 /* Resources */,
+				0A15C6241B4096A100C2F42F /* Sources */,
+				0A15C6251B4096A100C2F42F /* Frameworks */,
+				0A15C6261B4096A100C2F42F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = TrackPadTouchOSX;
-			productName = TrackPad;
-			productReference = 0A85DB9A1B3D90610007C385 /* TrackPadTouchOSX.bundle */;
+			name = TrackpadTouchOSX5;
+			productName = TrackpadTouchOSX5;
+			productReference = 0A15C6281B4096A100C2F42F /* TrackpadTouchOSX5.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+		0A15C6321B4096B500C2F42F /* TrackpadTouchOSX4 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0A15C6371B4096B600C2F42F /* Build configuration list for PBXNativeTarget "TrackpadTouchOSX4" */;
+			buildPhases = (
+				0A15C62F1B4096B500C2F42F /* Sources */,
+				0A15C6301B4096B500C2F42F /* Frameworks */,
+				0A15C6311B4096B500C2F42F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TrackpadTouchOSX4;
+			productName = TrackpadTouchOSX4;
+			productReference = 0A15C6331B4096B500C2F42F /* TrackpadTouchOSX4.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -95,12 +120,15 @@
 				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = "Kevin Watters";
 				TargetAttributes = {
-					0A85DB991B3D90610007C385 = {
+					0A15C6271B4096A100C2F42F = {
+						CreatedOnToolsVersion = 6.3.2;
+					};
+					0A15C6321B4096B500C2F42F = {
 						CreatedOnToolsVersion = 6.3.2;
 					};
 				};
 			};
-			buildConfigurationList = 0A85DB951B3D90610007C385 /* Build configuration list for PBXProject "TrackPadTouchOSX" */;
+			buildConfigurationList = 0A85DB951B3D90610007C385 /* Build configuration list for PBXProject "TrackpadTouchOSX" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -108,17 +136,25 @@
 				en,
 			);
 			mainGroup = 0A85DB911B3D90610007C385;
-			productRefGroup = 0A85DB9B1B3D90610007C385 /* Products */;
+			productRefGroup = 0A85DB911B3D90610007C385;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0A85DB991B3D90610007C385 /* TrackPadTouchOSX */,
+				0A15C6271B4096A100C2F42F /* TrackpadTouchOSX5 */,
+				0A15C6321B4096B500C2F42F /* TrackpadTouchOSX4 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0A85DB981B3D90610007C385 /* Resources */ = {
+		0A15C6261B4096A100C2F42F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0A15C6311B4096B500C2F42F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -128,17 +164,105 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		0A85DB961B3D90610007C385 /* Sources */ = {
+		0A15C6241B4096A100C2F42F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A85DBA71B3D91340007C385 /* Plugin.m in Sources */,
+				0A15C63D1B4096FF00C2F42F /* Plugin.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0A15C62F1B4096B500C2F42F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A15C63E1B4096FF00C2F42F /* Plugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		0A15C62D1B4096A100C2F42F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = TrackpadTouchOSX5/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_APPS_DIR)/Unity",
+					5/Unity,
+					5.app/Contents/Frameworks/MonoEmbedRuntime/osx,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		0A15C62E1B4096A100C2F42F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = TrackpadTouchOSX5/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_APPS_DIR)/Unity",
+					5/Unity,
+					5.app/Contents/Frameworks/MonoEmbedRuntime/osx,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+		0A15C6381B4096B600C2F42F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = TrackpadTouchOSX4/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_APPS_DIR)/Unity/Unity.app/Contents/Frameworks/MonoEmbedRuntime/osx",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		0A15C6391B4096B600C2F42F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = TrackpadTouchOSX4/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_APPS_DIR)/Unity/Unity.app/Contents/Frameworks/MonoEmbedRuntime/osx",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
 		0A85DB9F1B3D90610007C385 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -216,57 +340,30 @@
 			};
 			name = Release;
 		};
-		0A85DBA21B3D90610007C385 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = TrackPad/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SYSTEM_APPS_DIR)/Unity/Unity.app/Contents/Frameworks/MonoEmbedRuntime/osx",
-				);
-				PRODUCT_NAME = TrackPadTouchOSX;
-				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Debug;
-		};
-		0A85DBA31B3D90610007C385 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = TrackPad/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SYSTEM_APPS_DIR)/Unity/Unity.app/Contents/Frameworks/MonoEmbedRuntime/osx",
-				);
-				PRODUCT_NAME = TrackPadTouchOSX;
-				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0A85DB951B3D90610007C385 /* Build configuration list for PBXProject "TrackPadTouchOSX" */ = {
+		0A15C62C1B4096A100C2F42F /* Build configuration list for PBXNativeTarget "TrackpadTouchOSX5" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A15C62D1B4096A100C2F42F /* Debug */,
+				0A15C62E1B4096A100C2F42F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		0A15C6371B4096B600C2F42F /* Build configuration list for PBXNativeTarget "TrackpadTouchOSX4" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A15C6381B4096B600C2F42F /* Debug */,
+				0A15C6391B4096B600C2F42F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		0A85DB951B3D90610007C385 /* Build configuration list for PBXProject "TrackpadTouchOSX" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0A85DB9F1B3D90610007C385 /* Debug */,
 				0A85DBA01B3D90610007C385 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0A85DBA11B3D90610007C385 /* Build configuration list for PBXNativeTarget "TrackPadTouchOSX" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0A85DBA21B3D90610007C385 /* Debug */,
-				0A85DBA31B3D90610007C385 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

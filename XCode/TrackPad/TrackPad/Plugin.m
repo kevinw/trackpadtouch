@@ -15,8 +15,10 @@ NSView* view = nil;
 }
 - (void)touchesBeganWithEvent:(NSEvent *)event;
 - (void)touchesEndedWithEvent:(NSEvent *)event;
+- (void)touchesMovedWithEvent:(NSEvent *)event;
 - (void)touchesCancelledWithEvent:(NSEvent *)event;
-
+- (void)magnifyWithEvent:(NSEvent *)event;
+- (void)swipeWithEvent:(NSEvent *)event;
 @end
 
 @implementation TrackingObject
@@ -70,9 +72,6 @@ static void HandleTouchEvent(NSEvent* event) {
                 break;
                 
             }
-            case NSTouchPhaseTouching:
-            case NSTouchPhaseAny:
-                break;
             default:
                 break;
         }
@@ -102,22 +101,23 @@ static void HandleTouchEvent(NSEvent* event) {
 }
 
 - (void)magnifyWithEvent:(NSEvent *)event {
-    // block unity from the
+    // unity's game mode will maximmize and minimize if we don't receive this event.
 }
 
-- (void)swipeWithEvent:(NSEvent *)event {
-}
-
+- (void)swipeWithEvent:(NSEvent *)event {}
 
 @end
 
 TrackingObject* pTrackMgr = nil;
 
-void SetupTrackingObject()
+
+void DestroyTrackingObject()
 {
-    NSApplication* app = [NSApplication sharedApplication];
-    NSWindow* window = [app mainWindow];
-    view = [window contentView];
+    trackPadTouchBeganMethod = NULL;
+    trackPadTouchMovedMethod = NULL;
+    trackPadTouchEndedMethod = NULL;
+    trackPadTouchStationaryMethod = NULL;
+    trackPadTouchCancelledMethod = NULL;
     
     if(pTrackMgr != nil)
     {
@@ -125,14 +125,25 @@ void SetupTrackingObject()
         [pTrackMgr release];
         pTrackMgr = nil;
     }
+}
+
+void SetupTrackingObject()
+{
+    NSApplication* app = [NSApplication sharedApplication];
+    NSWindow* window = [app mainWindow];
+    view = [window contentView];
+    
+    DestroyTrackingObject();
     
     pTrackMgr = [TrackingObject alloc];
-    [view setAcceptsTouchEvents:YES];
     NSResponder* responder = [view nextResponder];
     [view setNextResponder:pTrackMgr];
     [pTrackMgr setNextResponder:responder];
-    [view setWantsRestingTouches: TRUE];
+
+    [view setAcceptsTouchEvents:YES];
+    //[view setWantsRestingTouches: TRUE];
 }
+
 
 
 static void FindMethod(MonoImage* monoImage, const char* methodName, MonoMethod** pointer) {
@@ -148,12 +159,6 @@ static void FindMethod(MonoImage* monoImage, const char* methodName, MonoMethod*
 
 void InitPlugin(const char* pluginPath)
 {
-    trackPadTouchBeganMethod = NULL;
-    trackPadTouchMovedMethod = NULL;
-    trackPadTouchEndedMethod = NULL;
-    trackPadTouchStationaryMethod = NULL;
-    trackPadTouchCancelledMethod = NULL;
-    
     SetupTrackingObject();
     
     NSString *assemblyPath = [NSString stringWithUTF8String:pluginPath];
@@ -170,6 +175,7 @@ void InitPlugin(const char* pluginPath)
 }
 
 void DeinitPlugin() {
+    DestroyTrackingObject();
 }
 
 

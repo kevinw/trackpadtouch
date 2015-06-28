@@ -4,15 +4,40 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>TrackPad.xcscheme</key>
+		<key>TrackpadTouchOSX4.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>TrackpadTouchOSX5.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>0A15C6271B4096A100C2F42F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0A15C6321B4096B500C2F42F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0A3567CA1B4050E90055855B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>0A85DB991B3D90610007C385</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0AB0E2D51B40530800D9CD6C</key>
 		<dict>
 			<key>primary</key>
 			<true/>

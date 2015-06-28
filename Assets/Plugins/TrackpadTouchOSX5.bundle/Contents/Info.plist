@@ -7,13 +7,13 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
-	<string>TrackPadTouchOSX</string>
+	<string>TrackpadTouchOSX5</string>
 	<key>CFBundleIdentifier</key>
-	<string>tinygayvoxels.TrackPadTouchOSX</string>
+	<string>tinygayvoxels.TrackpadTouchOSX5</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>TrackPadTouchOSX</string>
+	<string>TrackpadTouchOSX5</string>
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
 	<key>CFBundleShortVersionString</key>
