@@ -1,11 +1,7 @@
 fileFormatVersion: 2
-guid: 8d4579276c19942b288c3c99ec60396a
-labels:
-- Trackpad
-- Input
-- Touch
+guid: b0264992f90e27e48beeee54b801c8f2
 folderAsset: yes
-timeCreated: 1435401676
+timeCreated: 1435528701
 licenseType: Free
 DefaultImporter:
   userData: 
