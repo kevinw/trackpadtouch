@@ -1,5 +1,10 @@
 fileFormatVersion: 2
 guid: 6573e932139bf4bfc92ecc404a113445
+labels:
+- Input
+- Trackpad
+- Touch
+- Controller
 timeCreated: 1435326305
 licenseType: Free
 MonoImporter:

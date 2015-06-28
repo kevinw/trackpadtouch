@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: 2502cd27ff61e4ab8b43259925532219
+labels:
+- OSX
 folderAsset: yes
 timeCreated: 1435526898
 licenseType: Free
@@ -12,6 +14,10 @@ PluginImporter:
     Any:
       enabled: 1
       settings: {}
+    Editor:
+      enabled: 0
+      settings:
+        DefaultValueInitialized: true
   userData: 
   assetBundleName: 
   assetBundleVariant: 
