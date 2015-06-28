@@ -251,10 +251,10 @@ namespace TrackpadTouch {
 			DeinitPlugin();
 		}
 
+		static Touch touchObj = new Touch();
 		static Touch CreateTouch(int fingerId, int tapCount, Vector2 position, Vector2 deltaPos, float timeDelta, TouchPhase phase)
 		{
-			var self = new Touch();
-			ValueType valueSelf = self;
+			ValueType valueSelf = touchObj;
 			Touch_deltaTime.SetValue(valueSelf, timeDelta);
 			Touch_tapCount.SetValue(valueSelf, tapCount);
 			Touch_phase.SetValue(valueSelf, phase);
