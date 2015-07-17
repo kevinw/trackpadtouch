@@ -1,12 +1,56 @@
 #import <Foundation/Foundation.h>
 @import AppKit;
-#import "TrackPad_Prefix.pch"
 
-MonoMethod *trackPadTouchBeganMethod;
-MonoMethod *trackPadTouchMovedMethod;
-MonoMethod *trackPadTouchEndedMethod;
-MonoMethod *trackPadTouchStationaryMethod;
-MonoMethod *trackPadTouchCancelledMethod;
+#define RING_BUFFER_SIZE 512
+
+#define PHASE_BEGAN 0
+#define PHASE_MOVED 1
+#define PHASE_ENDED 2
+#define PHASE_CANCELLED 3
+#define PHASE_STATIONARY 4
+
+struct NativeTouchEvent {
+	unsigned char touchId;
+	unsigned char phase;
+	float normalX;
+	float normalY;
+};
+
+#define ringBuffer_typedef(T, NAME) \
+  typedef struct { \
+    int size; \
+    int start; \
+    int end; \
+    T* elems; \
+  } NAME
+
+#define bufferInit(BUF, S, T) \
+  BUF.size = S+1; \
+  BUF.start = 0; \
+  BUF.end = 0; \
+  BUF.elems = (T*)calloc(BUF.size, sizeof(T))
+
+
+#define bufferDestroy(BUF) if (BUF.elems) { free(BUF.elems); BUF.elems = 0; }
+#define nextStartIndex(BUF) ((BUF.start + 1) % BUF.size)
+#define nextEndIndex(BUF) ((BUF.end + 1) % BUF.size)
+#define isBufferEmpty(BUF) (BUF.end == BUF.start)
+#define isBufferFull(BUF) (nextEndIndex(BUF) == BUF.start)
+
+#define bufferWrite(BUF, ELEM) \
+  BUF.elems[BUF.end] = ELEM; \
+  BUF.end = (BUF.end + 1) % BUF.size; \
+  if (isBufferEmpty(BUF)) { \
+    BUF.start = nextStartIndex(BUF); \
+  }
+
+#define bufferRead(BUF, ELEM) \
+    ELEM = BUF.elems[BUF.start]; \
+    BUF.start = nextStartIndex(BUF);
+
+ringBuffer_typedef(struct NativeTouchEvent, TouchEventRing);
+
+TouchEventRing ringBuffer = {0, 0, 0, NULL};
 
 NSView* view = nil;
 
@@ -23,54 +67,75 @@ NSView* view = nil;
 
 @implementation TrackingObject
 
+struct Finger {
+    void* nativeTouchId;
+};
+
+#define MAX_FINGERS 10
+
+struct Finger fingers[MAX_FINGERS];
+
+static unsigned char getUserTouchId(void* touchId) {
+    for (int i = 0; i < MAX_FINGERS; ++i) {
+        if (fingers[i].nativeTouchId == touchId)
+            return i;
+    }
+    
+    for (int i = 0; i < MAX_FINGERS; ++i) {
+        if (fingers[i].nativeTouchId == NULL) {
+            fingers[i].nativeTouchId = touchId;
+            return i;
+        }
+    }
+    
+    return 0;
+}
+
+static void releaseTouchId(int userTouchId) {
+    assert(userTouchId < MAX_FINGERS);
+    fingers[userTouchId].nativeTouchId = NULL;
+}
+
 static void HandleTouchEvent(NSEvent* event) {
     NSSet *touches = [event touchesMatchingPhase:NSTouchPhaseAny inView:view];
     for (NSTouch *touch in touches)
     {
         void* touchId = touch.identity;
+		unsigned char userTouchId = getUserTouchId(touchId);
+
         switch ([touch phase]) {
             case NSTouchPhaseBegan: {
                 float normalX = touch.normalizedPosition.x;
                 float normalY = touch.normalizedPosition.y;
-                float deviceWidth = touch.deviceSize.width;
-                float deviceHeight = touch.deviceSize.height;
-                void *args[] = { &touchId, &normalX, &normalY, &deviceWidth, &deviceHeight };
-                if (trackPadTouchBeganMethod)
-                    mono_runtime_invoke(trackPadTouchBeganMethod, NULL, args, NULL);
+				struct NativeTouchEvent event = {userTouchId, PHASE_BEGAN, normalX, normalY};
+				bufferWrite(ringBuffer, event);
                 break;
             }
             case NSTouchPhaseMoved: {
                 float normalX = touch.normalizedPosition.x;
                 float normalY = touch.normalizedPosition.y;
-                float deviceWidth = touch.deviceSize.width;
-                float deviceHeight = touch.deviceSize.height;
-                void *args[] = { &touchId, &normalX, &normalY, &deviceWidth, &deviceHeight };
-                if (trackPadTouchMovedMethod)
-                    mono_runtime_invoke(trackPadTouchMovedMethod, NULL, args, NULL);
+				struct NativeTouchEvent event = {userTouchId, PHASE_MOVED, normalX, normalY};
+				bufferWrite(ringBuffer, event);
                 break;
             }
             case NSTouchPhaseCancelled: {
-                void *args[] = { &touchId };
-                if (trackPadTouchCancelledMethod)
-                    mono_runtime_invoke(trackPadTouchCancelledMethod, NULL, args, NULL);
+				struct NativeTouchEvent event = {userTouchId, PHASE_CANCELLED, 0, 0};
+                releaseTouchId(userTouchId);
+				bufferWrite(ringBuffer, event);
                 break;
             }
             case NSTouchPhaseStationary: {
                 float normalX = touch.normalizedPosition.x;
                 float normalY = touch.normalizedPosition.y;
-                float deviceWidth = touch.deviceSize.width;
-                float deviceHeight = touch.deviceSize.height;
-                void *args[] = { &touchId, &normalX, &normalY, &deviceWidth, &deviceHeight };
-                if (trackPadTouchStationaryMethod)
-                    mono_runtime_invoke(trackPadTouchStationaryMethod, NULL, args, NULL);
+				struct NativeTouchEvent event = {userTouchId, PHASE_STATIONARY, normalX, normalY};
+				bufferWrite(ringBuffer, event);
                 break;
             }
             case NSTouchPhaseEnded: {
-                void *args[] = { &touchId };
-                if (trackPadTouchEndedMethod)
-                    mono_runtime_invoke(trackPadTouchEndedMethod, NULL, args, NULL);
+				struct NativeTouchEvent event = {userTouchId, PHASE_ENDED, 0, 0};
+                releaseTouchId(userTouchId);
+				bufferWrite(ringBuffer, event);
                 break;
-                
             }
             default:
                 break;
@@ -110,14 +175,10 @@ static void HandleTouchEvent(NSEvent* event) {
 
 TrackingObject* pTrackMgr = nil;
 
-
 void DestroyTrackingObject()
 {
-    trackPadTouchBeganMethod = NULL;
-    trackPadTouchMovedMethod = NULL;
-    trackPadTouchEndedMethod = NULL;
-    trackPadTouchStationaryMethod = NULL;
-    trackPadTouchCancelledMethod = NULL;
+	if (ringBuffer.elems)
+		bufferDestroy(ringBuffer);
     
     if(pTrackMgr != nil)
     {
@@ -134,6 +195,8 @@ void SetupTrackingObject()
     view = [window contentView];
     
     DestroyTrackingObject();
+
+	bufferInit(ringBuffer, RING_BUFFER_SIZE, struct NativeTouchEvent);
     
     pTrackMgr = [TrackingObject alloc];
     NSResponder* responder = [view nextResponder];
@@ -144,34 +207,18 @@ void SetupTrackingObject()
     //[view setWantsRestingTouches: TRUE];
 }
 
-
-
-static void FindMethod(MonoImage* monoImage, const char* methodName, MonoMethod** pointer) {
-    MonoMethodDesc *desc = mono_method_desc_new(methodName, TRUE);
-    if (!desc) {
-        NSLog(@"Could not find method %s", methodName);
-        return;
-    }
-    
-    *pointer = mono_method_desc_search_in_image(desc, monoImage);
-    mono_method_desc_free(desc);
-}
-
-void InitPlugin(const char* pluginPath)
+void InitPlugin()
 {
     SetupTrackingObject();
-    
-    NSString *assemblyPath = [NSString stringWithUTF8String:pluginPath];
-    
-    MonoDomain* domain = mono_domain_get();
-    MonoAssembly* monoAssembly = mono_domain_assembly_open(domain, assemblyPath.UTF8String);
-    MonoImage* monoImage = mono_assembly_get_image(monoAssembly);
-    
-    FindMethod(monoImage, "TrackpadTouch.TrackpadInput:TrackpadTouchBegan", &trackPadTouchBeganMethod);
-    FindMethod(monoImage, "TrackpadTouch.TrackpadInput:TrackpadTouchMoved", &trackPadTouchMovedMethod);
-    FindMethod(monoImage, "TrackpadTouch.TrackpadInput:TrackpadTouchEnded", &trackPadTouchEndedMethod);
-    FindMethod(monoImage, "TrackpadTouch.TrackpadInput:TrackpadTouchStationary", &trackPadTouchStationaryMethod);
-    FindMethod(monoImage, "TrackpadTouch.TrackpadInput:TrackpadTouchCancelled", &trackPadTouchCancelledMethod);
+}
+
+bool ReadTouchEvent(struct NativeTouchEvent* event) {
+    if (!isBufferEmpty(ringBuffer)) {
+        bufferRead(ringBuffer, (*event));
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void DeinitPlugin() {

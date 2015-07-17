@@ -28,16 +28,19 @@ public class TrackpadInputExample : MonoBehaviour {
 					Object.Destroy(debugSphere);
 				debugSphere = touchObjects[touch.fingerId] = (GameObject)Object.Instantiate(prefab, worldPos, Quaternion.identity);	
 				debugSphere.name = "Touch " + touch.fingerId;
+				//Debug.Log("Finger " + touch.fingerId + " began at " + touch.position);
 				break;
 			case TouchPhase.Moved:
 				if (touchObjects.TryGetValue(touch.fingerId, out debugSphere))
 					debugSphere.transform.position = worldPos;
+				//Debug.Log("Finger " + touch.fingerId + " moved to " + touch.position);
 				break;
 			case TouchPhase.Canceled:
 			case TouchPhase.Ended:
 				if (touchObjects.TryGetValue(touch.fingerId, out debugSphere))
 					Object.Destroy(debugSphere);
 				touchObjects.Remove(touch.fingerId);
+				//Debug.Log("Finger " + touch.fingerId + " ended at " + touch.position);
 				break;
 			// case TouchPhase.Stationary:
 			// break;

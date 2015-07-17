@@ -6,9 +6,25 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace TrackpadTouch {
+	[StructLayout(LayoutKind.Sequential)]
+	public struct PlatformTouchEvent
+	{
+		public byte touchId;
+		public byte phase;
+		public float normalizedX;
+		public float normalizedY;
+	}
+
 	public static class TrackpadInput {
-		const int MAX_TOUCHES = 10;
-		const float EVICT_TIME = 0.7f;
+		private static readonly List<Touch> frameTouches = new List<Touch>();
+		private static int lastFrame = -1;
+
+
+		public static int touchCount { get {
+			return touches.Count;
+		} }
+
+		public static Touch GetTouch(int i) { return touches[i]; }
 
 		public static List<Touch> touches {
 			get {
@@ -17,207 +33,67 @@ namespace TrackpadTouch {
 					lastFrame = Time.frameCount;
 					frameTouches.Clear();
 
-					var oldest = Time.realtimeSinceStartup - 1.0f;
+					PlatformTouchEvent e;
+					e.touchId = 0;
+					e.phase = 0;
+					e.normalizedX = 0;
+					e.normalizedY = 0;
 
-					while (nativeTouchQueue.Count > 0) {
-						var nativeTouch = nativeTouchQueue.Dequeue();
-						if (nativeTouch.time < oldest) continue;
-						var screenPos = new Vector2(nativeTouch.normalizedX * Screen.width,
-													nativeTouch.normalizedY * Screen.height);
+					int count = 0;
+					while (ReadTouchEvent(ref e)) {
+						count++;
+						var screenPos = new Vector2(e.normalizedX * Screen.width,
+													e.normalizedY * Screen.height);
 						frameTouches.Add(CreateTouch(
-							nativeTouch.fingerId,
-							1,
-							screenPos,
-							Vector2.zero,
-							0,
-							nativeTouch.phase));
+							e.touchId, 1, screenPos, Vector2.zero, 0,
+							byteToTouchPhase(e.phase)));
 					}
-
-					nativeTouchQueue.Clear();
 				}
 
 				return frameTouches;
 			}
 		}
 
-		public static int touchCount { get {
-			return touches.Count;
-		} }
+		static TouchPhase byteToTouchPhase(byte touchPhase) {
+			switch (touchPhase) {
+				case 0: return TouchPhase.Began;
+				case 1: return TouchPhase.Moved;
+				case 2: return TouchPhase.Ended;
+				case 3: return TouchPhase.Canceled;
+				case 4: return TouchPhase.Stationary;
+				default: return TouchPhase.Ended;
+			}
+		}
 
-		public static Touch GetTouch(int i) { return touches[i]; }
 
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-		[DllImport ("TrackpadTouchOSX5")]
-		public static extern void InitPlugin(string assemblyPath);
+		[DllImport("TrackpadTouchOSX")]
+		public static extern void InitPlugin();
 
-		[DllImport ("TrackpadTouchOSX5")]
+		[DllImport("TrackpadTouchOSX")]
 		public static extern void DeinitPlugin();
+
+		[DllImport("TrackpadTouchOSX")]
+		static extern bool ReadTouchEvent(ref PlatformTouchEvent e);
 #else
+		[DllImport("TrackpadTouch")]
+		public static extern void InitWithWindowName();
+
 		public static void InitPlugin() {
-			Debug.LogWarning("Trackpad Touch is not support on this operating system yet.");
+			InitWithWindowName();
 		}
 
 		public static void DeinitPlugin() {
 		}
 #endif
 
-		static string AssemblyPath { get { return new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath; } }
-
-		static GameObject updateObject;
-
-		class TrackpadInputUpdate : MonoBehaviour {
-			public void Update() { TrackpadInput.Update(); }
-		}
-
 		static bool didInit;
 
 		static void Init() {
 			if (didInit) return;
 			didInit = true;
-
-			InitPlugin(AssemblyPath);
-
-			updateObject = new GameObject("Trackpad Touch");
-			GameObject.DontDestroyOnLoad(updateObject);
-			updateObject.AddComponent<TrackpadInputUpdate>();
+			InitPlugin();
 		}
-
-		public static void Update() {
-			if (Time.realtimeSinceStartup - lastEventUpdate > EVICT_TIME)
-				EvictStaleTouches();
-		}
-
-		static int groupId = 0;
-
-		struct NativeTouchEvent {
-			public NativeTouchEvent(int fingerId, TouchPhase phase) {
-				this.fingerId = fingerId;
-				this.phase = phase;
-				this.normalizedX = 0;
-				this.normalizedY = 0;
-				this.time = Time.realtimeSinceStartup;
-				this.group = groupId;
-			}
-
-			public NativeTouchEvent(int fingerId, TouchPhase phase, float normalX, float normalY) {
-				this.fingerId = fingerId;
-				this.phase = phase;
-				this.normalizedX = normalX;
-				this.normalizedY = normalY;
-				this.time = Time.realtimeSinceStartup;
-				this.group = groupId;
-			}
-
-			public int fingerId;
-			public TouchPhase phase;
-			public float normalizedX;
-			public float normalizedY;
-			public float time;
-			public int group;
-		}
-
-		static Queue<NativeTouchEvent> nativeTouchQueue = new Queue<NativeTouchEvent>();
-
-		struct Finger {
-			public IntPtr deviceTouchId;
-			public float lastUpdate;
-			public int groupId;
-		}
-
-		static Finger[] touchIds = new Finger[20];
-		static float lastEventUpdate = 0.0f;
-
-		static int GetTouchId(IntPtr deviceTouchId) {
-			float now = Time.realtimeSinceStartup;
-			if (now - lastEventUpdate > EVICT_TIME) groupId++;
-			lastEventUpdate = now;
-
-			for (var i = 0; i < touchIds.Length; ++i) {
-				if (touchIds[i].deviceTouchId == deviceTouchId) {
-					touchIds[i].lastUpdate = lastEventUpdate;
-					touchIds[i].groupId = groupId;
-					return i;
-				}
-			}
-
-			for (var i = 0; i < touchIds.Length; ++i) {
-				if (touchIds[i].deviceTouchId == IntPtr.Zero) {
-					touchIds[i].deviceTouchId = deviceTouchId;
-					touchIds[i].lastUpdate = lastEventUpdate;
-					touchIds[i].groupId = groupId;
-					return i;
-				}
-			}
-
-			return 0;
-		}
-
-
-		static bool inEvict;
-		static void EvictStaleTouches() {
-			if (inEvict) return;
-			inEvict = true;
-			float now = Time.realtimeSinceStartup;
-			for (var i = 0; i < MAX_TOUCHES; ++i) {
-				if (touchIds[i].deviceTouchId != IntPtr.Zero) {
-					if (touchIds[i].groupId != groupId && now - touchIds[i].lastUpdate > EVICT_TIME) {
-						nativeTouchQueue.Enqueue(new NativeTouchEvent(i, TouchPhase.Ended));
-						ReleaseTouchId(touchIds[i].deviceTouchId);
-					}
-				}
-			}
-			inEvict = false;
-		}
-
-		static void ReleaseTouchId(IntPtr deviceTouchId) {
-			for (var i = 0; i < touchIds.Length; ++i)
-				if (touchIds[i].deviceTouchId == deviceTouchId)
-					touchIds[i].deviceTouchId = IntPtr.Zero;
-		}
-
-		static bool HandlersActive { get { return Application.isPlaying; } }
-
-#region NativeCallbacks
-		public static void TrackpadTouchBegan(IntPtr deviceTouchId, float normalX, float normalY, float deviceW, float deviceH)
-		{
-			if (HandlersActive) {
-				nativeTouchQueue.Enqueue(new NativeTouchEvent(GetTouchId(deviceTouchId), TouchPhase.Began, normalX, normalY));
-			}
-		}
-
-		public static void TrackpadTouchMoved(IntPtr deviceTouchId, float normalX, float normalY, float deviceW, float deviceH)
-		{
-			if (HandlersActive) {
-				nativeTouchQueue.Enqueue(new NativeTouchEvent(GetTouchId(deviceTouchId), TouchPhase.Moved, normalX, normalY));
-			}
-		}
-
-		public static void TrackpadTouchEnded(IntPtr deviceTouchId)
-		{
-			if (HandlersActive) {
-				nativeTouchQueue.Enqueue(new NativeTouchEvent(GetTouchId(deviceTouchId), TouchPhase.Ended));
-				ReleaseTouchId(deviceTouchId);
-			}
-		}
-
-		public static void TrackpadTouchCancelled(IntPtr deviceTouchId)
-		{
-			if (HandlersActive) {
-				nativeTouchQueue.Enqueue(new NativeTouchEvent(GetTouchId(deviceTouchId), TouchPhase.Canceled));
-				ReleaseTouchId(deviceTouchId);
-			}
-		}
-
-		public static void TrackpadTouchStationary(IntPtr deviceTouchId, float normalX, float normalY, float deviceW, float deviceH) {
-			if (HandlersActive) {
-				nativeTouchQueue.Enqueue(new NativeTouchEvent(GetTouchId(deviceTouchId), TouchPhase.Stationary, normalX, normalY));
-			}
-		}
-
-#endregion
-
-		private static readonly List<Touch> frameTouches = new List<Touch>();
-		private static int lastFrame = -1;
 
 		// for setting private variables on Touch objects
 		readonly static FieldInfo Touch_deltaTime;
@@ -238,20 +114,15 @@ namespace TrackpadTouch {
 			Touch_fingerId = type.GetField("m_FingerId", flag);
 			Touch_position = type.GetField("m_Position", flag);
 			//Touch_rawPosition = type.GetField("m_RawPosition", flag);
-			
 			AppDomain.CurrentDomain.DomainUnload += OnDomainUnload;
 		}
 
-		static void OnDomainUnload(object sender, EventArgs args)
-		{
-			if (updateObject) {
-				GameObject.Destroy(updateObject);
-				updateObject = null;
-			}
+		static void OnDomainUnload(object sender, EventArgs args) {
 			DeinitPlugin();
 		}
 
 		static Touch touchObj = new Touch();
+
 		static Touch CreateTouch(int fingerId, int tapCount, Vector2 position, Vector2 deltaPos, float timeDelta, TouchPhase phase)
 		{
 			ValueType valueSelf = touchObj;

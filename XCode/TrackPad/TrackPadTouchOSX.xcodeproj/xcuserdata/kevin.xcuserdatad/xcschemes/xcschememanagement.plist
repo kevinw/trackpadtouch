@@ -4,12 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>TrackpadTouchOSX4.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>0</integer>
-		</dict>
-		<key>TrackpadTouchOSX5.xcscheme</key>
+		<key>TrackpadTouchOSX.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
@@ -28,6 +23,11 @@
 			<true/>
 		</dict>
 		<key>0A3567CA1B4050E90055855B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0A40AA351B59142F00AB916E</key>
 		<dict>
 			<key>primary</key>
 			<true/>
