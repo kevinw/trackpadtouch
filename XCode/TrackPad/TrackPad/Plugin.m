@@ -69,13 +69,21 @@ NSView* view = nil;
 
 struct Finger {
     void* nativeTouchId;
+    double time;
 };
 
 #define MAX_FINGERS 10
 
 struct Finger fingers[MAX_FINGERS];
 
-static unsigned char getUserTouchId(void* touchId) {
+static void clearFingers() {
+    for (int i = 0; i < MAX_FINGERS; ++i) {
+        fingers[i].nativeTouchId = NULL;
+        fingers[i].time = 0;
+    }
+}
+
+static unsigned char getUserTouchId(void* touchId, double time) {
     for (int i = 0; i < MAX_FINGERS; ++i) {
         if (fingers[i].nativeTouchId == touchId)
             return i;
@@ -88,7 +96,16 @@ static unsigned char getUserTouchId(void* touchId) {
         }
     }
     
-    return 0;
+    double minTime = DBL_MAX;
+    int minIndex = 0;
+    for (int i = 0; i < MAX_FINGERS; ++i) {
+        if (fingers[i].time < minTime) {
+            minTime = fingers[i].time;
+            minIndex = i;
+        }
+    }
+    
+    return minIndex;
 }
 
 static void releaseTouchId(int userTouchId) {
@@ -97,11 +114,12 @@ static void releaseTouchId(int userTouchId) {
 }
 
 static void HandleTouchEvent(NSEvent* event) {
+    double time = event.timestamp;
     NSSet *touches = [event touchesMatchingPhase:NSTouchPhaseAny inView:view];
     for (NSTouch *touch in touches)
     {
         void* touchId = touch.identity;
-		unsigned char userTouchId = getUserTouchId(touchId);
+		unsigned char userTouchId = getUserTouchId(touchId, time);
 
         switch ([touch phase]) {
             case NSTouchPhaseBegan: {
@@ -197,6 +215,8 @@ void SetupTrackingObject()
     DestroyTrackingObject();
 
 	bufferInit(ringBuffer, RING_BUFFER_SIZE, struct NativeTouchEvent);
+    
+    clearFingers();
     
     pTrackMgr = [TrackingObject alloc];
     NSResponder* responder = [view nextResponder];
