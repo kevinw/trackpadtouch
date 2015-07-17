@@ -9,7 +9,9 @@ public class TrackpadInputExample : MonoBehaviour {
 	Dictionary<int, GameObject> touchObjects = new Dictionary<int, GameObject>();
 
 	void Update () {
+
 		foreach (var touch in TrackpadInput.touches) {
+			
 			var screenPoint = new Vector3(touch.position.x, touch.position.y, 0);
 			var worldPos = Camera.main.ScreenToWorldPoint(screenPoint);
 			worldPos.z = 0;

@@ -3,6 +3,8 @@ using UnityEngine;
 namespace TrackpadTouch {
 
 public class LockCursor : MonoBehaviour {
+
+#if UNITY_5_0 || UNITY_5_1 || UNITY_5_2
 	public CursorLockMode wantedMode;
 
 	void SetCursorState() {
@@ -35,6 +37,7 @@ public class LockCursor : MonoBehaviour {
 		GUILayout.EndVertical();
 		SetCursorState();
 	}
+#endif
 }
 
-}
+} // namespace TrackpadTouch
