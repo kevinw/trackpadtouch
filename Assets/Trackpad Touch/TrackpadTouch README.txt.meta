@@ -4,6 +4,8 @@ labels:
 - Input
 - Touch
 - Trackpad
+- Controller
+- Multitouch
 timeCreated: 1435358178
 licenseType: Free
 TextScriptImporter:
