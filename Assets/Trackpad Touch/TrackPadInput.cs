@@ -5,6 +5,10 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 namespace TrackpadTouch {
 	[StructLayout(LayoutKind.Sequential)]
 	public struct PlatformTouchEvent
@@ -18,7 +22,6 @@ namespace TrackpadTouch {
 	public static class TrackpadInput {
 		private static readonly List<Touch> frameTouches = new List<Touch>();
 		private static int lastFrame = -1;
-
 
 		public static int touchCount { get {
 			return touches.Count;
@@ -65,7 +68,6 @@ namespace TrackpadTouch {
 			}
 		}
 
-
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 		[DllImport("TrackpadTouchOSX")]
 		public static extern void InitPlugin();
@@ -75,24 +77,54 @@ namespace TrackpadTouch {
 
 		[DllImport("TrackpadTouchOSX")]
 		static extern bool ReadTouchEvent(ref PlatformTouchEvent e);
-#else
-		[DllImport("TrackpadTouch")]
-		public static extern void InitWithWindowName();
 
-		public static void InitPlugin() {
-			InitWithWindowName();
-		}
+		[DllImport("TrackpadTouchOSX")]
+		static extern void ClearTouches();
+#endif
 
-		public static void DeinitPlugin() {
-		}
+#if false
+		static TrackpadTouchLib nativeLib;
+		static bool ReadTouchEvent(ref PlatformTouchEvent e) { return nativeLib.ReadTouchEvent (ref e); }
+		static void InitPlugin() { nativeLib.InitPlugin(); }
+		static void DeinitPlugin() { nativeLib.DeinitPlugin(); }
+		static public void ClearTouches() { nativeLib.ClearTouches(); }
+		static public void DebugDump() { nativeLib.DebugDump (); }
 #endif
 
 		static bool didInit;
 
+		class FocusNoticer : MonoBehaviour {
+			void OnApplicationFocus(bool focusStatus) {
+				TrackpadInput.ClearTouches ();
+			}
+			/*
+			void Update() {
+				if (Input.GetKeyDown (KeyCode.D))
+					TrackpadInput.DebugDump ();
+			}
+			*/
+		}
+
+		static FocusNoticer focusNoticer;
+
 		static void Init() {
+			if (!focusNoticer) {
+				focusNoticer = new GameObject ().AddComponent<FocusNoticer>();
+				focusNoticer.gameObject.name = "Focus Noticer";
+				focusNoticer.gameObject.hideFlags = HideFlags.HideAndDontSave;
+			}
 			if (didInit) return;
 			didInit = true;
+#if false
+			nativeLib = new TrackpadTouchLib();
+			nativeLib.InitPlugin ();
+#endif
 			InitPlugin();
+		}
+
+		// called when scripts reload
+		static void OnDomainUnload(object sender, EventArgs args) {
+			DeinitPlugin();
 		}
 
 		// for setting private variables on Touch objects
@@ -115,10 +147,6 @@ namespace TrackpadTouch {
 			Touch_position = type.GetField("m_Position", flag);
 			//Touch_rawPosition = type.GetField("m_RawPosition", flag);
 			AppDomain.CurrentDomain.DomainUnload += OnDomainUnload;
-		}
-
-		static void OnDomainUnload(object sender, EventArgs args) {
-			DeinitPlugin();
 		}
 
 		static Touch touchObj = new Touch();

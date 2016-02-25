@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -20,12 +21,13 @@ public class TrackpadInputExample : MonoBehaviour {
 
 			switch (touch.phase) {
 
-			case TouchPhase.Began:
-				if (touchObjects.TryGetValue(touch.fingerId, out debugSphere))
-					Object.Destroy(debugSphere);
-				debugSphere = touchObjects[touch.fingerId] = (GameObject)Object.Instantiate(prefab, worldPos, Quaternion.identity);	
-				debugSphere.name = "Touch " + touch.fingerId;
-				break;
+				case TouchPhase.Began:
+					if (touchObjects.TryGetValue (touch.fingerId, out debugSphere))
+						Object.Destroy (debugSphere);
+					debugSphere = touchObjects [touch.fingerId] = (GameObject)Object.Instantiate (prefab, worldPos, Quaternion.identity);	
+					debugSphere.GetComponentInChildren<Text> ().text = touch.fingerId.ToString();
+					debugSphere.name = "Touch " + touch.fingerId;
+					break;
 
 			case TouchPhase.Moved:
 				if (touchObjects.TryGetValue(touch.fingerId, out debugSphere))

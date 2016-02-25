@@ -73,25 +73,53 @@ struct Finger {
 };
 
 #define MAX_FINGERS 10
+#define FINGER_TIMEOUT_SECS 1.5
 
 struct Finger fingers[MAX_FINGERS];
 
+
+void DebugDump() {
+    NSLog(@"----\n");
+    for (int i = 0; i < MAX_FINGERS; ++i) {
+        NSLog(@"finger %d: (nativeTouchId=%p, time=%f)\n", i, fingers[i].nativeTouchId, fingers[i].time);
+    }
+    
+}
+
 static void clearFingers() {
     for (int i = 0; i < MAX_FINGERS; ++i) {
-        fingers[i].nativeTouchId = NULL;
-        fingers[i].time = 0;
+        if (fingers[i].nativeTouchId != NULL) {
+            fingers[i].nativeTouchId = NULL;
+            fingers[i].time = 0;
+            struct NativeTouchEvent event = {i, PHASE_ENDED, 0, 0};
+            bufferWrite(ringBuffer, event);
+        }
+    }
+}
+
+static void clearFingersOlderThan(double time) {
+    for (int i = 0; i < MAX_FINGERS; ++i) {
+        if (fingers[i].time < time && fingers[i].nativeTouchId != NULL) {
+            fingers[i].nativeTouchId = NULL;
+            fingers[i].time = time;
+            struct NativeTouchEvent event = {i, PHASE_ENDED, 0, 0};
+            bufferWrite(ringBuffer, event);
+        }
     }
 }
 
 static unsigned char getUserTouchId(void* touchId, double time) {
     for (int i = 0; i < MAX_FINGERS; ++i) {
-        if (fingers[i].nativeTouchId == touchId)
+        if (fingers[i].nativeTouchId == touchId) {
+            fingers[i].time = time;
             return i;
+        }
     }
     
     for (int i = 0; i < MAX_FINGERS; ++i) {
         if (fingers[i].nativeTouchId == NULL) {
             fingers[i].nativeTouchId = touchId;
+            fingers[i].time = time;
             return i;
         }
     }
@@ -105,6 +133,8 @@ static unsigned char getUserTouchId(void* touchId, double time) {
         }
     }
     
+    fingers[minIndex].time = time;
+    
     return minIndex;
 }
 
@@ -115,6 +145,7 @@ static void releaseTouchId(int userTouchId) {
 
 static void HandleTouchEvent(NSEvent* event, const char* debugStr) {
     double time = event.timestamp;
+    
     NSSet *touches = [event touchesMatchingPhase:NSTouchPhaseAny inView:view];
     for (NSTouch *touch in touches)
     {
@@ -123,7 +154,7 @@ static void HandleTouchEvent(NSEvent* event, const char* debugStr) {
 
         switch ([touch phase]) {
             case NSTouchPhaseBegan: {
-                //NSLog(@"BEGAN: %p %s\n", touch.identity, debugStr);
+                //NSLog(@"TPT BEGAN: %p %s\n", touch.identity, debugStr);
                 float normalX = touch.normalizedPosition.x;
                 float normalY = touch.normalizedPosition.y;
                 struct NativeTouchEvent event = {userTouchId, PHASE_BEGAN, normalX, normalY};
@@ -131,7 +162,7 @@ static void HandleTouchEvent(NSEvent* event, const char* debugStr) {
                 break;
             }
             case NSTouchPhaseMoved: {
-                //NSLog(@"MOVED: %p %s\n", touch.identity, debugStr);
+                //NSLog(@"TPT MOVED: %p %s\n", touch.identity, debugStr);
                 float normalX = touch.normalizedPosition.x;
                 float normalY = touch.normalizedPosition.y;
                 struct NativeTouchEvent event = {userTouchId, PHASE_MOVED, normalX, normalY};
@@ -139,14 +170,14 @@ static void HandleTouchEvent(NSEvent* event, const char* debugStr) {
                 break;
             }
             case NSTouchPhaseCancelled: {
-                //NSLog(@"CANCELLED: %p %s\n", touch.identity, debugStr);
+//                NSLog(@"TPT CANCELLED: %p %s\n", touch.identity, debugStr);
                 struct NativeTouchEvent event = {userTouchId, PHASE_CANCELLED, 0, 0};
                 releaseTouchId(userTouchId);
                 bufferWrite(ringBuffer, event);
                 break;
             }
             case NSTouchPhaseStationary: {
-                //NSLog(@"STATIONARY: %p %s\n", touch.identity, debugStr);
+//                NSLog(@"TPT STATIONARY: %p %s\n", touch.identity, debugStr);
                 float normalX = touch.normalizedPosition.x;
                 float normalY = touch.normalizedPosition.y;
                 struct NativeTouchEvent event = {userTouchId, PHASE_STATIONARY, normalX, normalY};
@@ -154,17 +185,20 @@ static void HandleTouchEvent(NSEvent* event, const char* debugStr) {
                 break;
             }
             case NSTouchPhaseEnded: {
-                //NSLog(@"ENDED: %p %s\n", touch.identity, debugStr);
+//                NSLog(@"ENDED: %p %s\n", touch.identity, debugStr);
                 struct NativeTouchEvent event = {userTouchId, PHASE_ENDED, 0, 0};
                 releaseTouchId(userTouchId);
                 bufferWrite(ringBuffer, event);
                 break;
             }
             default:
-                //NSLog(@"Unknown event type\n");
+//                NSLog(@"Unknown event type\n");
                 break;
         }
     }
+    
+    clearFingersOlderThan(time - FINGER_TIMEOUT_SECS);
+
 }
 
 
@@ -235,7 +269,15 @@ void SetupTrackingObject()
 
 void InitPlugin()
 {
+//    NSLog(@"TPT InitPlugin");
     SetupTrackingObject();
+}
+
+void ClearTouches() {
+    if (ringBuffer.elems)
+        bufferDestroy(ringBuffer);
+    bufferInit(ringBuffer, RING_BUFFER_SIZE, struct NativeTouchEvent);
+    clearFingers();
 }
 
 bool ReadTouchEvent(struct NativeTouchEvent* event) {
