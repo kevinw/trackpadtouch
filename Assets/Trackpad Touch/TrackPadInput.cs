@@ -22,6 +22,7 @@ namespace TrackpadTouch {
 	public static class TrackpadInput {
 		private static readonly List<Touch> frameTouches = new List<Touch>();
 		private static int lastFrame = -1;
+		private static float lastTime;
 
 		public static int touchCount { get {
 			return touches.Count;
@@ -29,11 +30,20 @@ namespace TrackpadTouch {
 
 		public static Touch GetTouch(int i) { return touches[i]; }
 
+
+		static Dictionary<int, Touch> prevTouches = new Dictionary<int, Touch>();
+
 		public static List<Touch> touches {
 			get {
 				Init();
+				lastTime = Time.unscaledTime;
 				if (lastFrame != Time.frameCount) { // only accumulate touches once per frame
 					lastFrame = Time.frameCount;
+
+					prevTouches.Clear();
+					foreach (var touch in frameTouches)
+						prevTouches[touch.fingerId] = touch;
+
 					frameTouches.Clear();
 
 					PlatformTouchEvent e;
@@ -47,10 +57,19 @@ namespace TrackpadTouch {
 						count++;
 						var screenPos = new Vector2(e.normalizedX * Screen.width,
 													e.normalizedY * Screen.height);
+						var deltaPos = new Vector2(0, 0);
+
+						Touch prevTouch = new Touch();
+						if (prevTouches.TryGetValue(e.touchId, out prevTouch))
+							deltaPos = screenPos - prevTouch.position;
+
+						var timeDelta = Time.unscaledTime - lastTime;
 						frameTouches.Add(CreateTouch(
-							e.touchId, 1, screenPos, Vector2.zero, 0,
+							e.touchId, 1, screenPos, deltaPos, timeDelta,
 							byteToTouchPhase(e.phase)));
 					}
+
+					lastTime = Time.unscaledTime;
 				}
 
 				return frameTouches;
