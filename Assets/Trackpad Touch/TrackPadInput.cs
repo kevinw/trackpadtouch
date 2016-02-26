@@ -101,15 +101,6 @@ namespace TrackpadTouch {
 		static extern void ClearTouches();
 #endif
 
-#if false
-		static TrackpadTouchLib nativeLib;
-		static bool ReadTouchEvent(ref PlatformTouchEvent e) { return nativeLib.ReadTouchEvent (ref e); }
-		static void InitPlugin() { nativeLib.InitPlugin(); }
-		static void DeinitPlugin() { nativeLib.DeinitPlugin(); }
-		static public void ClearTouches() { nativeLib.ClearTouches(); }
-		static public void DebugDump() { nativeLib.DebugDump (); }
-#endif
-
 		static bool didInit;
 
 		class FocusNoticer : MonoBehaviour {
@@ -134,10 +125,6 @@ namespace TrackpadTouch {
 			}
 			if (didInit) return;
 			didInit = true;
-#if false
-			nativeLib = new TrackpadTouchLib();
-			nativeLib.InitPlugin ();
-#endif
 			InitPlugin();
 		}
 
