@@ -10,6 +10,7 @@ using UnityEditor;
 #endif
 
 namespace TrackpadTouch {
+
 	[StructLayout(LayoutKind.Sequential)]
 	public struct PlatformTouchEvent
 	{
@@ -20,16 +21,42 @@ namespace TrackpadTouch {
 	}
 
 	public static class TrackpadInput {
+
+#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+		[DllImport("TrackpadTouchOSX")]
+		public static extern void InitPlugin();
+
+		[DllImport("TrackpadTouchOSX")]
+		public static extern void DeinitPlugin();
+
+		[DllImport("TrackpadTouchOSX")]
+		static extern bool ReadTouchEvent(ref PlatformTouchEvent e);
+
+		[DllImport("TrackpadTouchOSX")]
+		static extern void ClearTouches();
+#else
+		static bool didPlatformWarning = false;
+
+		public static void InitPlugin() {}
+		public static void DeinitPlugin() {}
+		static bool ReadTouchEvent(ref PlatformTouchEvent e) {
+			if (!didPlatformWarning) {
+				Debug.LogWarning("TrackpadTouch will not receive touches on this platform");
+				didPlatformWarning = true;
+			}
+			return false;
+		}
+		static void ClearTouches() {}
+#endif
+
 		private static readonly List<Touch> frameTouches = new List<Touch>();
 		private static int lastFrame = -1;
 		private static float lastTime;
+		private static bool didInit;
 
-		public static int touchCount { get {
-			return touches.Count;
-		} }
+		public static int touchCount { get { return touches.Count; } }
 
-		public static Touch GetTouch(int i) { return touches[i]; }
-
+		public static Touch GetTouch(int i) { Debug.Log("GetTouch(" + i + ")"); return touches[i]; }
 
 		static Dictionary<int, Touch> prevTouches = new Dictionary<int, Touch>();
 
@@ -87,32 +114,10 @@ namespace TrackpadTouch {
 			}
 		}
 
-#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-		[DllImport("TrackpadTouchOSX")]
-		public static extern void InitPlugin();
-
-		[DllImport("TrackpadTouchOSX")]
-		public static extern void DeinitPlugin();
-
-		[DllImport("TrackpadTouchOSX")]
-		static extern bool ReadTouchEvent(ref PlatformTouchEvent e);
-
-		[DllImport("TrackpadTouchOSX")]
-		static extern void ClearTouches();
-#endif
-
-		static bool didInit;
-
 		class FocusNoticer : MonoBehaviour {
 			void OnApplicationFocus(bool focusStatus) {
 				TrackpadInput.ClearTouches ();
 			}
-			/*
-			void Update() {
-				if (Input.GetKeyDown (KeyCode.D))
-					TrackpadInput.DebugDump ();
-			}
-			*/
 		}
 
 		static FocusNoticer focusNoticer;

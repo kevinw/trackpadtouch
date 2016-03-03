@@ -2,8 +2,6 @@
 Trackpad Touch OS X
 ===================
 
-Version 1.0
-
 http://kevinw.github.io/trackpadtouch
 
 by Kevin Watters (kevinwatters@gmail.com)
@@ -36,7 +34,7 @@ HOW TO USE
 (There is an example scene included on the package showing off multitouch
 support.)
 
-Import the Trackpad Touch package. Use TrackpadInput.touches just like you
+Import the Trackpad Touch package. Then use TrackpadInput.touches just like you
 would use Input.touches:
 
   using UnityEngine;
@@ -61,5 +59,5 @@ would use Input.touches:
       }
   }
 
-  See the Touch and TouchPhase classes in the Unity docs for more info on how
-  to use the Input.touches interface.
+See the Touch and TouchPhase classes in the Unity docs for more info on how
+to use the Input.touches interface.
