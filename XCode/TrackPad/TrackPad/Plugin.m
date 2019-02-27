@@ -14,6 +14,8 @@ struct NativeTouchEvent {
   unsigned char phase;
   float normalX;
   float normalY;
+  float deviceWidth;
+  float deviceHeight;
 };
 
 #define ringBuffer_typedef(T, NAME) \
@@ -157,7 +159,7 @@ static void HandleTouchEvent(NSEvent* event, const char* debugStr) {
                 //NSLog(@"TPT BEGAN: %p %s\n", touch.identity, debugStr);
                 float normalX = touch.normalizedPosition.x;
                 float normalY = touch.normalizedPosition.y;
-                struct NativeTouchEvent event = {userTouchId, PHASE_BEGAN, normalX, normalY};
+                struct NativeTouchEvent event = {userTouchId, PHASE_BEGAN, normalX, normalY, touch.deviceSize.width, touch.deviceSize.height};
                 bufferWrite(ringBuffer, event);
                 break;
             }
@@ -165,13 +167,13 @@ static void HandleTouchEvent(NSEvent* event, const char* debugStr) {
                 //NSLog(@"TPT MOVED: %p %s\n", touch.identity, debugStr);
                 float normalX = touch.normalizedPosition.x;
                 float normalY = touch.normalizedPosition.y;
-                struct NativeTouchEvent event = {userTouchId, PHASE_MOVED, normalX, normalY};
+                struct NativeTouchEvent event = {userTouchId, PHASE_MOVED, normalX, normalY, touch.deviceSize.width, touch.deviceSize.height};
                 bufferWrite(ringBuffer, event);
                 break;
             }
             case NSTouchPhaseCancelled: {
 //                NSLog(@"TPT CANCELLED: %p %s\n", touch.identity, debugStr);
-                struct NativeTouchEvent event = {userTouchId, PHASE_CANCELLED, 0, 0};
+                struct NativeTouchEvent event = {userTouchId, PHASE_CANCELLED, 0, 0, touch.deviceSize.width, touch.deviceSize.height};
                 releaseTouchId(userTouchId);
                 bufferWrite(ringBuffer, event);
                 break;
@@ -180,13 +182,13 @@ static void HandleTouchEvent(NSEvent* event, const char* debugStr) {
 //                NSLog(@"TPT STATIONARY: %p %s\n", touch.identity, debugStr);
                 float normalX = touch.normalizedPosition.x;
                 float normalY = touch.normalizedPosition.y;
-                struct NativeTouchEvent event = {userTouchId, PHASE_STATIONARY, normalX, normalY};
+                struct NativeTouchEvent event = {userTouchId, PHASE_STATIONARY, normalX, normalY, touch.deviceSize.width, touch.deviceSize.height};
                 bufferWrite(ringBuffer, event);
                 break;
             }
             case NSTouchPhaseEnded: {
 //                NSLog(@"ENDED: %p %s\n", touch.identity, debugStr);
-                struct NativeTouchEvent event = {userTouchId, PHASE_ENDED, 0, 0};
+                struct NativeTouchEvent event = {userTouchId, PHASE_ENDED, 0, 0, touch.deviceSize.width, touch.deviceSize.height};
                 releaseTouchId(userTouchId);
                 bufferWrite(ringBuffer, event);
                 break;

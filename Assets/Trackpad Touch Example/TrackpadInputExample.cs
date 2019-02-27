@@ -10,9 +10,10 @@ public class TrackpadInputExample : MonoBehaviour {
 	Dictionary<int, GameObject> touchObjects = new Dictionary<int, GameObject>();
 
 	void Update () {
+		for (var i = 0; i < TrackpadInput.touches.Count; ++i) {
+			var touch = TrackpadInput.touches[i];
+			var deviceSize = TrackpadInput.deviceSizes[i];
 
-		foreach (var touch in TrackpadInput.touches) {
-			
 			var screenPoint = new Vector3(touch.position.x, touch.position.y, 0);
 			var worldPos = Camera.main.ScreenToWorldPoint(screenPoint);
 			worldPos.z = 0;
@@ -25,7 +26,9 @@ public class TrackpadInputExample : MonoBehaviour {
 					if (touchObjects.TryGetValue (touch.fingerId, out debugSphere))
 						Object.Destroy (debugSphere);
 					debugSphere = touchObjects [touch.fingerId] = (GameObject)Object.Instantiate (prefab, worldPos, Quaternion.identity);	
-					debugSphere.GetComponentInChildren<Text> ().text = touch.fingerId.ToString();
+					var texts = debugSphere.GetComponentsInChildren<Text> ();
+					texts[0].text = touch.fingerId.ToString();
+					texts[1].text = deviceSize.ToString();
 					debugSphere.name = "Touch " + touch.fingerId;
 					break;
 
@@ -48,6 +51,7 @@ public class TrackpadInputExample : MonoBehaviour {
 				break;
 			}
 		}
+
 	}
 
 	void OnDisable() {

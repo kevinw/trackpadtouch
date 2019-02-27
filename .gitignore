@@ -1,4 +1,6 @@
 .DS_Store
+.vscode/
+XCode/TrackPad/TrackPadTouchOSX.xcodeproj/xcshareddata/
 
 Temp/
 Library/

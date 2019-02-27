@@ -18,6 +18,8 @@ namespace TrackpadTouch {
 		public byte phase;
 		public float normalizedX;
 		public float normalizedY;
+		public float deviceWidth;
+		public float deviceHeight;
 	}
 
 	public static class TrackpadInput {
@@ -60,6 +62,8 @@ namespace TrackpadTouch {
 
 		static Dictionary<int, Touch> prevTouches = new Dictionary<int, Touch>();
 
+		public static List<Vector2> deviceSizes = new List<Vector2>();
+
 		public static List<Touch> touches {
 			get {
 				Init();
@@ -72,12 +76,15 @@ namespace TrackpadTouch {
 						prevTouches[touch.fingerId] = touch;
 
 					frameTouches.Clear();
+					deviceSizes.Clear();
 
 					PlatformTouchEvent e;
 					e.touchId = 0;
 					e.phase = 0;
 					e.normalizedX = 0;
 					e.normalizedY = 0;
+					e.deviceWidth = 0;
+					e.deviceHeight = 0;
 
 					int count = 0;
 					while (ReadTouchEvent(ref e)) {
@@ -91,9 +98,12 @@ namespace TrackpadTouch {
 							deltaPos = screenPos - prevTouch.position;
 
 						var timeDelta = Time.unscaledTime - lastTime;
-						frameTouches.Add(CreateTouch(
+						var newTouch = CreateTouch(
 							e.touchId, 1, screenPos, deltaPos, timeDelta,
-							byteToTouchPhase(e.phase)));
+							byteToTouchPhase(e.phase));
+						frameTouches.Add(newTouch);
+						
+						deviceSizes.Add(new Vector2(e.deviceWidth, e.deviceHeight));
 					}
 
 					lastTime = Time.unscaledTime;
