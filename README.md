@@ -1,5 +1,7 @@
 # Trackpad Touch
 
+<img src="https://kev.town/trackpadtouch/tt_logo-horizontal-700px.png">
+
 ### [See website for a video and more information](https://kev.town/trackpadtouch/)
 
 <img src="https://kev.town/trackpadtouch/TrackpadTouchEditorScreenshot700.jpg">
