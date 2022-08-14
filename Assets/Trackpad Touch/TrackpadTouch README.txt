@@ -2,7 +2,7 @@
 Trackpad Touch OS X
 ===================
 
-http://kevinw.github.io/trackpadtouch
+https://github.com/kevinw/trackpadtouch/
 
 by Kevin Watters (kevinwatters@gmail.com)
 
