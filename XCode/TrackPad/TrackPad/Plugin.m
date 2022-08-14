@@ -1,6 +1,14 @@
 #import <Foundation/Foundation.h>
 @import AppKit;
 
+// Function prototypes
+void DebugDump(void);
+void DestroyTrackingObject(void);
+void InitPlugin(void);
+void ClearTouches(void);
+void SetupTrackingObject(void);
+void DeinitPlugin(void);
+
 #define RING_BUFFER_SIZE 512
 
 #define PHASE_BEGAN 0
@@ -78,6 +86,9 @@ struct Finger {
 #define FINGER_TIMEOUT_SECS 1.5
 
 struct Finger fingers[MAX_FINGERS];
+
+
+
 
 
 void DebugDump() {
