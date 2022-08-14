@@ -2,6 +2,8 @@
 
 ### [See website for a video and more information](https://kev.town/trackpadtouch/)
 
+<img src="https://kev.town/trackpadtouch/TrackpadTouchEditorScreenshot700.jpg">
+
 ## What is this?
 
 Reads multitouch input from your trackpad, giving it to your Unity game with an interface matching Input.touches.
