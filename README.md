@@ -16,4 +16,4 @@ This allows you to test your game's multitouch functionality in the editor, with
 
 1. Build the XCode project `XCode/TrackPad/TrackPadTouchOSX.xcodeproj`.
 
-2. Place `TrackpadTouchOSX.bundle` into `Assets/Plugins`.
+2. Place `TrackpadTouchOSX.bundle` into your Unity project: on Apple Silicon, place into `Assets/Plugins/arm64` -- otherwise `Assets/Plugins`.
