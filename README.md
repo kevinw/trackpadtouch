@@ -4,7 +4,7 @@
 
 ## What is this?
 
-Reads multitouch input from your trackpad, giving it to your Unity game with an interface matching Input.touches.
+Reads multitouch input from your trackpad, giving it to your Unity game with an interface matching `Input.touches`.
 
 This allows you to test your game's multitouch functionality in the editor, without having to use Unity Remote or building to the device. It also works great in standalone builds, so you can ship multitouch support to users.
 
@@ -31,9 +31,9 @@ If you want to disable the OS gestures, go to System Preferences -> Trackpad -> 
 
 ## How to Use
 
-(There is an example scene included in the package showing off multitouch support.)
+**NOTE: There is an example scene included in the package showing off multitouch support.**
 
-Import the Trackpad Touch package.
+Import the `TrackpadTouch` package.
 
 Use `TrackpadInput.touches` just like you would use `Input.touches`:
 
